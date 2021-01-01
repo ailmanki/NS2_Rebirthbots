@@ -1,7 +1,23 @@
 name        = "Rebirth Bots"
-source_dir  = "source/"
-output_dir  = "output/"
-description = [=[Rebirth Bots, forked from Nin's Rebirth Bot's to fix compatibility issues with Patch 336.]=]
+source_dir  = "source"
+output_dir  = "output"
+description = [=[Rebirth Bots, forked from [url=steamcommunity.com/sharedfiles/filedetails/?id=1416699554]Nin's Rebirth Bot's[/url] to fix compatibility issues with Patch 336.
+
+Server console commands:
+[list]
+[*] Toggles bots reporting what they are trying to do [code]sup_bots[/code]
+[*] The server will balance the teams with bots [code]sv_bots_even_teams[/code]
+[/list]
+
+Server configuration:
+RebirthBots.json 
+[code]
+{
+   even_teams_with_bots = false
+}
+[/code]
+
+ModId: 8ae71fa2]=]
 image       = "preview.jpg"
 tag_modtype = "Gameplay Tweak"
 tag_support = "Must be run on Server"
