@@ -951,41 +951,44 @@ if kCombatVersion then
         return false
     end
     
-    local function GotItemAlready(self, upgrade)
-
-        if upgrade then 
-            if (self.combatUpgrades and table.maxn(self.combatUpgrades) > 0) then
-                for _, id in ipairs(self.combatUpgrades) do
-                    if (tonumber(id) == upgrade:GetId()) then
-                        return true
-                    end  
-                end  
-            else        
-                return false            
-            end 
-        end
-        return false
-        
-    end
+    --local function GotItemAlready(self, upgrade)
+    --
+    --    if upgrade then
+    --        if (self.combatUpgrades and table.maxn(self.combatUpgrades) > 0) then
+    --            for _, id in ipairs(self.combatUpgrades) do
+    --                if (tonumber(id) == upgrade:GetId()) then
+    --                    return true
+    --                end
+    --            end
+    --        else
+    --            return false
+    --        end
+    --    end
+    --    return false
+    --
+    --end
     local function CreateBuyCombatUpgradeAction(techId, weightIfCanDo)
     
         return function(bot, brain)
 
             local name = "combat_" .. EnumToString( kTechId, techId )
             local player = bot:GetPlayer()
-            local sdb = brain:GetSenses()
+            --local sdb = brain:GetSenses()
             local resources = player:GetResources()
-            local allUps = GetAllUpgrades("Marine")
+            --local allUps = GetAllUpgrades("Marine")
             local upgrade = GetUpgradeFromTechId(techId)
             local cost = upgrade:GetLevels()
             local doable = GotRequirements(player, upgrade)  
-            local hasUpgrade = player:GetHasCombatUpgrade(upgrade:GetId())  
+            local hasUpgrade = player:GetHasCombatUpgrade(upgrade:GetId())
+            local hardCapped = upgrade:GetIsHardCappedForBots(player)
             local weight = 0.0
 
             if doable and not hasUpgrade then
-
                 weight = weightIfCanDo
-
+            end
+    
+            if hardCapped then
+                weight = 0
             end
 
             -- limit how often we can try to buy things
