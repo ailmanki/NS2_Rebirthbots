@@ -99,9 +99,10 @@ function CommanderBot:GenerateMove()
     end
 
     local player = self:GetPlayer()
+    local gamerules = GetGamerules()
     player.is_a_robot = true
     
-    local team = GetGamerules():GetTeam(self.team)
+    local team = gamerules:GetTeam(self.team)
     
     local teamType = team:GetTeamType()
     local stationClass = kTeam2StationClassName[ teamType ]
@@ -130,7 +131,7 @@ function CommanderBot:GenerateMove()
 	else
         -- Brain will modify move.commands
         self:_LazilyInitBrain()
-        if self.brain and GetGamerules():GetGameStarted() and player:GetIsAlive() then
+        if self.brain and gamerules:GetGameStarted() and player:GetIsAlive() then
             self.brain:Update(self,  move)
         else
             -- must be waiting to join a team and game to start

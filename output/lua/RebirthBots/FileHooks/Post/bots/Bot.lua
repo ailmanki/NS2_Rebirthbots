@@ -8,11 +8,12 @@ function Bot:UpdateTeam()
     if player and player:GetTeamNumber() == 0 then
     
         if not self.team then
-            self.team = ConditionalValue(math.random() < .5, 1, 2)
+            self.team = math.random(1, 2)
         end
-        
-        if GetGamerules():GetCanJoinTeamNumber(player, self.team) or Shared.GetCheatsEnabled() then
-            GetGamerules():JoinTeam(player, self.team, true, true)
+
+        local gamerules = GetGamerules()
+        if gamerules and gamerules:GetCanJoinTeamNumber(player, self.team) or Shared.GetCheatsEnabled() then
+            gamerules:JoinTeam(player, self.team, true)
         end
         
     end

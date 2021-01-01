@@ -98,22 +98,6 @@ end
 ------------------------------------------
 --
 ------------------------------------------
-local function GetCanAttack(marine)
-    local weapon = marine:GetActiveWeapon()
-    if weapon ~= nil then
-        if weapon:isa("ClipWeapon") then
-            return weapon:GetAmmo() > 0
-        else
-            return true
-        end
-    else
-        return false
-    end
-end
-
-------------------------------------------
---
-------------------------------------------
 local function SwitchToPrimary(marine)
     if marine:GetWeapon( Rifle.kMapName ) then
         marine:SetActiveWeapon(Rifle.kMapName, true)
@@ -365,8 +349,7 @@ local function PerformAttack( eyePos, mem, bot, brain, move )
     assert( mem )
 
     local target = Shared.GetEntity(mem.entId)
-
-    if target ~= nil then
+    assert(target ~= nil)
 
         if not target:isa("Player") or GetDistanceToTouch(  eyePos, target ) < 15 then
             brain.teamBrain:UnassignBot(bot)
@@ -374,14 +357,6 @@ local function PerformAttack( eyePos, mem, bot, brain, move )
         end
         
         PerformAttackEntity( eyePos, target, mem.lastSeenPos, bot, brain, move )
-
-    else
-
-        assert(false)
-        -- This should never really happen..
-
-    end
-
 
 end
 
@@ -495,7 +470,7 @@ kMarineBrainActions =
         table.copy(GetEntitiesWithinRange( "Flamethrower", marine:GetOrigin(), 20, true ), weapons, true)
 
         -- ignore shotguns owned by someone already
-        shotguns = FilterArray( weapons, function(ent) return ent:GetParent() == nil end )
+        weapons = FilterArray( weapons, function(ent) return ent:GetParent() == nil end )
         local bestDist, bestGun = GetNearestFiltered(marine:GetOrigin(), weapons)
 
         local weight = 0.0
@@ -1152,7 +1127,7 @@ kMarineBrainActions =
         
         -- Figure out if we have a good enough weapon.
         local bestWeaponTechId
-        local weapons = marine:GetHUDOrderedWeaponList()
+        weapons = marine:GetHUDOrderedWeaponList()
         for w = 1, #weapons do
         
             local weapon = weapons[w]

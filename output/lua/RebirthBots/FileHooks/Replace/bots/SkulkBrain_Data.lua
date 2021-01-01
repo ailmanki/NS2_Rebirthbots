@@ -4,7 +4,6 @@ Script.Load("lua/bots/BrainSenses.lua")
 
 
 local kEvolutions = {
--- gorge is bugged as hell
     kTechId.Lerk,
     kTechId.Fade,
     kTechId.Onos
@@ -235,7 +234,6 @@ local function PerformAttackEntity( eyePos, bestTarget, lastSeenPos, bot, brain,
     
     local aimPosPlusVel = aimPos + (bestTarget.GetVelocity and bestTarget:GetVelocity() or 0) * math.min(distance,1) / math.min(player:GetMaxSpeed(),5) * 3
     
-    local targetPos = bestTarget:GetEngagementPoint()
     local isDodgeable = bestTarget:isa("Player") or bestTarget:isa("Babbler")
     local hasClearShot = distance < 45.0 and bot:GetBotCanSeeTarget( bestTarget )
     if hasClearShot then
@@ -360,7 +358,7 @@ kSkulkBrainActions =
     ------------------------------------------
     function(bot, brain)
         return { name = "debug idle", weight = 0.001,
-                perform = function(move)
+                perform = function()
                     bot:GetMotion():SetDesiredMoveTarget(nil)
                     -- there is nothing obvious to do.. figure something out
                     -- like go to the marines, or defend 
@@ -448,10 +446,10 @@ kSkulkBrainActions =
 
             -- Check upgrades
             for i = 2, #avaibleUpgrades do
-                local techId = avaibleUpgrades[i]
-                local techNode = player:GetTechTree():GetTechNode(techId)
-                local isAvailable = techNode and techNode:GetAvailable(player, techId, false)
-                local cost = isAvailable and LookupTechData(evolvingId, kTechDataUpgradeCost, 0) or math.huge
+                techId = avaibleUpgrades[i]
+                techNode = player:GetTechTree():GetTechNode(techId)
+                isAvailable = techNode and techNode:GetAvailable(player, techId, false)
+                cost = isAvailable and LookupTechData(evolvingId, kTechDataUpgradeCost, 0) or math.huge
                 
                 if res >= cost and not table.icontains(existingUpgrades, techId) and
                         GetIsUpgradeAllowed(player, techId, existingUpgrades) and
@@ -574,7 +572,7 @@ kSkulkBrainActions =
         local eyePos = skulk:GetEyePos()
 
         local pheromones = GetEntitiesForTeam( "Pheromone", skulk:GetTeamNumber())
-        local bestPheromoneLocation = nil
+        local bestPheromoneLocation
         local bestValue = 0
         
         for p = 1, #pheromones do

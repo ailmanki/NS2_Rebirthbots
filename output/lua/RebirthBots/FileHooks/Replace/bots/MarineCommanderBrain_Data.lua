@@ -66,7 +66,7 @@ local function GetIsWeldedByOtherMAC(self, target)
                 end
                 
                 local currentOrder = mac:GetCurrentOrder()
-                local orderTarget = nil
+                local orderTarget
                 if currentOrder and currentOrder:GetParam() ~= nil then
                     orderTarget = Shared.GetEntity(currentOrder:GetParam())
                 end
@@ -561,7 +561,6 @@ kMarineComBrainActions =
     function(bot, brain)
         local name = "macs"
         local com = bot:GetPlayer()
-        local team = bot:GetPlayer():GetTeam()
         local sdb = brain:GetSenses()
         local doables = sdb:Get("doableTechIds")
         local weight = 0.0
@@ -660,7 +659,7 @@ kMarineComBrainActions =
 ]]--
     function(bot, brain)
 
-        return { name = "idle", weight = 1e-5,
+        return { name = "idle", weight = 0.0001,
             perform = function(move)
                 if brain.debug then
                     DebugPrint("idling..")

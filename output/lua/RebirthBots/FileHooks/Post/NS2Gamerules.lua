@@ -42,13 +42,23 @@ if Server then
     
     
     function NS2Gamerules:GetCanJoinTeamNumber(player, teamNumber)
-
-        
+	
+		-- Every check below is disabled with cheats enabled
+		if Shared.GetCheatsEnabled() then
+			return true
+		end
+		
         local forceEvenTeams = Server.GetConfigSetting("force_even_teams_on_join")
         if forceEvenTeams then
             
             local team1Players, _, team1Bots = self.team1:GetNumPlayers()
             local team2Players, _, team2Bots = self.team2:GetNumPlayers()
+			
+			local team1Number = self.team1:GetTeamNumber()
+			local team2Number = self.team2:GetTeamNumber()
+	
+			
+			
             --Log("player.is_a_robot: %s", player.is_a_robot)
             
 			-- only subtract bots IF we want to even teams with bots
@@ -59,27 +69,24 @@ if Server then
 				end
 			end
             
-            if (team1Players > team2Players) and (teamNumber == self.team1:GetTeamNumber()) then
+            if (team1Players > team2Players) and (teamNumber == team1Number) then
                 Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(0), true)
-                return false, 0
-            elseif (team2Players > team1Players) and (teamNumber == self.team2:GetTeamNumber()) then
+                return false
+            elseif (team2Players > team1Players) and (teamNumber == team2Number) then
                 Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(0), true)
-                return false, 0
+                return false
             end
 
         end
 
+        -- Scenario: Veteran tries to join a team at rookie only server
         if teamNumber ~= kSpectatorIndex then --allow to spectate
-		
-			if not Shared.GetCheatsEnabled() and Server.IsDedicated() and
-					not self.botTraining and player:GetPlayerLevel() ~= -1 then
-				
-				if isRookieOnly and player:GetSkillTier() > kRookieMaxSkillTier then
-					Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(2), true)
-					return false
-				end
-			end
-			
+            local isRookieOnly = Server.IsDedicated() and not self.botTraining and self.gameInfo:GetRookieMode()
+
+            if isRookieOnly and player:GetSkillTier() > kRookieMaxSkillTier then
+                Server.SendNetworkMessage(player, "JoinError", BuildJoinErrorMessage(2), true)
+                return false
+            end
         end
         
         return true
