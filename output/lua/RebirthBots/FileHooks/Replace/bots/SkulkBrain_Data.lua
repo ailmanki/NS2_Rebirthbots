@@ -4,6 +4,7 @@ Script.Load("lua/bots/BrainSenses.lua")
 
 
 local kEvolutions = {
+    kTechId.Gorge,
     kTechId.Lerk,
     kTechId.Fade,
     kTechId.Onos
@@ -1019,18 +1020,22 @@ if kCombatVersion then
     
     -- todo: don't block movement!!
 	-- make the first upgrades kinda crappy so it's more fun for everyone
-    --table.insert(kSkulkBrainActions, CreateBuyCombatUpgradeAction(kTechId.Adrenaline,      2.0 + math.random() ))
+    table.insert(kSkulkBrainActions, CreateBuyCombatUpgradeAction(kTechId.Adrenaline,      2.0 + math.random() ))
     table.insert(kSkulkBrainActions, CreateBuyCombatUpgradeAction(kTechId.Celerity,      3.0 + math.random() ))
     table.insert(kSkulkBrainActions, CreateBuyCombatUpgradeAction(kTechId.Regeneration,    3.0 + math.random() ))
     
     table.insert(kSkulkBrainActions, CreateBuyCombatUpgradeAction(kTechId.BioMassTwo,     2.0 + math.random() * 2.0 ))
+    table.insert(kSkulkBrainActions, CreateBuyCombatUpgradeAction(kTechId.BioMassThree,     0.3 + math.random() ))
     
-    --table.insert(kSkulkBrainActions, CreateBuyCombatUpgradeAction(kTechId.Crush,          2.0 + math.random() ))
-    --table.insert(kSkulkBrainActions, CreateBuyCombatUpgradeAction(kTechId.Adrenaline,     2.0 + math.random() ))
-    --table.insert(kSkulkBrainActions, CreateBuyCombatUpgradeAction(kTechId.Vampirism,     2.0 + math.random() ))
-    --table.insert(kSkulkBrainActions, CreateBuyCombatUpgradeAction(kTechId.Regeneration,   1.5 + math.random() ))
+    table.insert(kSkulkBrainActions, CreateBuyCombatUpgradeAction(kTechId.Crush,          0.3 + math.random() ))
+    table.insert(kSkulkBrainActions, CreateBuyCombatUpgradeAction(kTechId.Camouflage,          0.3 + math.random() ))
+    
+    table.insert(kSkulkBrainActions, CreateBuyCombatUpgradeAction(kTechId.Carapace,     0.3 + math.random() ))
+    table.insert(kSkulkBrainActions, CreateBuyCombatUpgradeAction(kTechId.Vampirism,     0.3 + math.random() ))
+    table.insert(kSkulkBrainActions, CreateBuyCombatUpgradeAction(kTechId.Crush,   0.3 + math.random() ))
     
     -- TODO: Make us choose?
+    table.insert(kSkulkBrainActions, CreateBuyCombatUpgradeAction(kTechId.Gorge,     5.0 + math.random() ))
     table.insert(kSkulkBrainActions, CreateBuyCombatUpgradeAction(kTechId.Lerk,     0.5 + math.random() * 3.0 ))
     table.insert(kSkulkBrainActions, CreateBuyCombatUpgradeAction(kTechId.Fade,     1.5 + math.random() * 3.0 ))
     table.insert(kSkulkBrainActions, CreateBuyCombatUpgradeAction(kTechId.Onos,     0.5 + math.random() * 2.0 ))

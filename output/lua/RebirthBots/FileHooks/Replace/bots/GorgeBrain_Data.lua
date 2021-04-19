@@ -419,7 +419,52 @@ kGorgeBrainActions =
                 bot:GetMotion():SetDesiredViewTarget(nil)
             end }
     end,
-
+    
+    function(bot, brain)
+    
+        local name = "heal"
+        local weight = 0.0
+        
+        local alien = bot:GetPlayer()
+        local sdb = brain:GetSenses()
+        local hive = sdb:Get("nearestHive")
+        if hive then
+            local health = hive:GetHealthScalar()
+            weight = EvalLPF( health, {
+                { 0.0, 100.0 },
+                { 0.6, 20.0 },
+                { 0.8, 10.0 },
+                { 1.0, 0.0 }
+            })
+        
+        end
+    
+        return { name = name, weight = weight,
+                 perform = function(move)
+                     if hive then
+            
+                         brain.teamBrain:UnassignBot(bot)
+                         
+                         local touchDist = GetDistanceToTouch( alien:GetEyePos(), hive )
+                   
+                           if touchDist > 2.5 then
+        
+                             --Print("Moving to hive")
+                             bot:GetMotion():SetDesiredViewTarget(nil)
+                             bot:GetMotion():SetDesiredMoveTarget(hive:GetEngagementPoint())
+    
+                         else
+                             --Print("Healing hive")
+                             
+                             bot:GetMotion():SetDesiredViewTarget( hive:GetEngagementPoint() )
+                             bot:GetMotion():SetDesiredMoveTarget( nil )
+                             move.commands = AddMoveCommand( move.commands, Move.SecondaryAttack )
+                         end
+                     end
+    
+                 end }
+    end,
+    
     ------------------------------------------
     --
     ------------------------------------------
@@ -502,6 +547,28 @@ function CreateGorgeBrainSenses()
 
             return {distance = distance, memory = nearestThreat}
         end)
-
+    
+    s:Add("nearestHive", function(db)
+        local player = db.bot:GetPlayer()
+        local playerPos = player:GetOrigin()
+        
+        local hives = GetEntitiesForTeam("Hive", player:GetTeamNumber())
+        
+        local builtHives = {}
+        
+        -- retreat only to built hives
+        for _, hive in ipairs(hives) do
+            
+            if hive:GetIsBuilt() and hive:GetIsAlive() and hive:GetHealthScalar() < 1.00  then
+                table.insert(builtHives, hive)
+            end
+        
+        end
+        
+        Shared.SortEntitiesByDistance(playerPos, builtHives)
+        
+        return builtHives[1]
+    end)
+    
     return s
 end

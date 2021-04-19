@@ -270,28 +270,27 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
     end
     
     
-    local retreating = false
-    local sdb = brain:GetSenses()
-    local minFraction = math.min( sdb:Get("healthFraction"), sdb:Get("ammoFraction") )
-    local armory = sdb:Get("nearestArmory").armory
-    
-    
-    -- retreat! Ignore previous move order, but keep our aim
-    if armory and minFraction < 0.3 and isDodgeable then
-        local touchDist = GetDistanceToTouch( eyePos, armory )
-        if touchDist > 2.0 then
-            bot:GetMotion():SetDesiredMoveTarget( armory:GetEngagementPoint() )
-        else
-            -- sit and wait to heal, ammo, etc.
-            brain.retreatTargetId = nil
-            bot:GetMotion():SetDesiredViewTarget( armory:GetEngagementPoint() )
-            bot:GetMotion():SetDesiredMoveTarget( nil )
-            doFire = false
-        end
-        retreating = true
-    end
-    
-    
+    --local retreating = false
+    --local sdb = brain:GetSenses()
+    --local minFraction = math.min( sdb:Get("healthFraction"), sdb:Get("ammoFraction") )
+    --local armory = sdb:Get("nearestArmory").armory
+    --
+    --
+    ---- retreat! Ignore previous move order, but keep our aim
+    --if armory and minFraction < 0.3 and isDodgeable then
+    --    local touchDist = GetDistanceToTouch( eyePos, armory )
+    --    if touchDist > 1.5 then
+    --        bot:GetMotion():SetDesiredMoveTarget( armory:GetEngagementPoint() )
+    --    else
+    --        -- sit and wait to heal, ammo, etc.
+    --        brain.retreatTargetId = nil
+    --        bot:GetMotion():SetDesiredViewTarget( armory:GetEngagementPoint() )
+    --        bot:GetMotion():SetDesiredMoveTarget( nil )
+    --        doFire = false
+    --    end
+    --    retreating = true
+    --end
+
     
     if doFire then
     
@@ -314,7 +313,8 @@ local function PerformAttackEntity( eyePos, target, lastSeenPos, bot, brain, mov
                 move.commands = AddMoveCommand( move.commands, Move.PrimaryAttack )
             end
             
-        elseif not retreating and dist < 15.0  then
+        --elseif not retreating and dist < 15.0  then
+        elseif dist < 15.0  then
             if not bot.lastAimCheatTime or bot.lastAimCheatTime + 0.5 < Shared.GetTime() then
                 bot.lastAimCheatTime = Shared.GetTime()
                 bot.lastAimPos = aimPos
@@ -422,7 +422,7 @@ local function PerformWeld(marine, target, bot, brain, move)
         PerformMove( marine:GetOrigin(), usePos, bot, brain, move )
         move.commands = AddMoveCommand( move.commands, Move.PrimaryAttack )
         
-        if target:isa("Player") and not target.is_a_robot then
+        if target:isa("Player") and not target:GetIsVirtual() then
             bot:SendTeamMessage("Let me weld you, " .. target:GetName(), 70)
         end
     end
@@ -1811,7 +1811,7 @@ function CreateMarineBrainSenses()
             local dist, player = GetMinTableEntry( players,
                 function(player)
                     assert( player ~= nil )
-                    if not player.is_a_robot  then
+                    if not player:GetIsVirtual() then
                         local dist = GetPhaseDistanceForMarine( marine, player:GetOrigin(), db.bot.brain.lastGateId )
 
                         return dist
