@@ -424,30 +424,33 @@ kGorgeBrainActions =
     
         local name = "heal"
         local weight = 0.0
-        
-        local alien = bot:GetPlayer()
-        local sdb = brain:GetSenses()
-        local hive = sdb:Get("nearestHive")
-        if hive then
-            local health = hive:GetHealthScalar()
-            weight = EvalLPF( health, {
-                { 0.0, 100.0 },
-                { 0.6, 20.0 },
-                { 0.8, 10.0 },
-                { 1.0, 0.0 }
-            })
-        
+        local alien
+        local hive
+        if GetHasTimelimitPassed and GetHasTimelimitPassed() then
+            weight = 0.0
+        else
+            local sdb = brain:GetSenses()
+            alien = bot:GetPlayer()
+            hive = sdb:Get("nearestHive")
+            if hive then
+                local health = hive:GetHealthScalar()
+                weight = EvalLPF( health, {
+                    { 0.0, 100.0 },
+                    { 0.6, 20.0 },
+                    { 0.8, 10.0 },
+                    { 1.0, 0.0 }
+                })
+            end
         end
-    
         return { name = name, weight = weight,
                  perform = function(move)
                      if hive then
             
                          brain.teamBrain:UnassignBot(bot)
-                         
+    
                          local touchDist = GetDistanceToTouch( alien:GetEyePos(), hive )
                    
-                           if touchDist > 2.5 then
+                         if touchDist > 2.5 then
         
                              --Print("Moving to hive")
                              bot:GetMotion():SetDesiredViewTarget(nil)
