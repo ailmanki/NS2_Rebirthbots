@@ -117,7 +117,7 @@ function CommanderBot:GenerateMove()
         --Print("trying to log %s into %s", player:GetName(), stationClass)
 
         -- Log into any com station
-        for _, entity in ipairs(GetEntitiesForTeam("CommandStructure", teamNumber)) do
+        for _, entity in ipairs(GetEntitiesForTeam("CommandStructure", player:GetTeamNumber())) do
 
             if entity:GetIsBuilt() then --isactive?
             local newPlayer = entity:LoginPlayer(player, true)
